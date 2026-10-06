@@ -133,8 +133,6 @@
       border-bottom-color: color-mix(in srgb, var(--primary) 24%, var(--background));
     }
 
-    .day-heading-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-left: auto; align-self: center; }
-    .day-heading-actions .editor-button { min-height: 36px; padding: 5px 10px; font-size: 14px; }
 
     .quick-reminders .day-heading span { color: var(--primary); font-weight: 700; }
     .quick-reminders .stop { grid-template-columns: max-content minmax(0, 1fr); align-items: start; }
@@ -284,18 +282,21 @@
     .itinerary-admin { margin: 22px 0 0; }
     .admin-content { display: grid; gap: 12px; padding: 16px 21px 18px; }
     .admin-access-form { display: grid; gap: 12px; }
-    .admin-actions, .stop-editor-actions, .day-editor-actions { display: flex; flex-wrap: wrap; gap: 9px; }
-    .day-manager-heading { margin: 0; color: var(--primary); font-size: 18px; }
-    .day-manager-row { display: grid; gap: 10px; padding: 12px; border: 1px solid color-mix(in srgb, var(--primary) 22%, var(--background)); border-radius: 12px; }
-    .day-manager-row .editor-label input { min-height: 44px; padding: 8px 10px; border: 1px solid color-mix(in srgb, var(--primary) 38%, var(--background)); border-radius: 10px; background: var(--background); color: var(--text); font: inherit; }
-    .day-manager-note { margin: 0; font-size: 14px; }
-    .section-manager { display: grid; gap: 12px; padding-top: 10px; border-top: 1px solid color-mix(in srgb, var(--primary) 22%, var(--background)); }
-    .section-manager[hidden] { display: none; }
-    .info-admin-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-    .info-editor-form { display: grid; gap: 9px; margin-top: 10px; }
-    .info-editor-form textarea { min-height: 72px; resize: vertical; }
-    .info-editor-form input, .info-editor-form textarea { min-height: 44px; padding: 8px 10px; border: 1px solid color-mix(in srgb, var(--primary) 38%, var(--background)); border-radius: 10px; background: var(--background); color: var(--text); font: inherit; }
-    .day-inline-editor { display: grid; gap: 10px; padding: 16px 21px; }
+    .admin-actions { display: flex; flex-wrap: wrap; gap: 9px; }
+    .manager-dialog { width: min(92vw, 650px); max-width: 650px; max-height: 88vh; padding: 0; overflow: hidden; border: 2px solid var(--primary); border-radius: 18px; background: var(--background); color: var(--text); box-shadow: 0 18px 60px color-mix(in srgb, var(--text) 28%, transparent); }
+    .manager-dialog::backdrop { background: color-mix(in srgb, var(--text) 58%, transparent); }
+    .manager-dialog-shell { display: grid; grid-template-rows: auto minmax(0, 1fr); max-height: 88vh; }
+    .manager-dialog-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 15px 18px; border-bottom: 1px solid color-mix(in srgb, var(--primary) 24%, var(--background)); }
+    .manager-dialog-header h2 { margin: 0; color: var(--primary); font-size: 21px; }
+    .manager-dialog-body { display: grid; align-content: start; gap: 12px; overflow-y: auto; padding: 16px 18px 20px; }
+    .manager-content { display: grid; align-content: start; gap: 12px; }
+    .manager-row { display: grid; gap: 10px; padding: 12px; border: 1px solid color-mix(in srgb, var(--primary) 25%, var(--background)); border-radius: 12px; }
+    .manager-row-main { display: grid; gap: 3px; }
+    .manager-row-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .manager-form { display: grid; gap: 12px; }
+    .manager-form textarea { min-height: 90px; resize: vertical; }
+    .manager-form input, .manager-form textarea { min-height: 46px; padding: 9px 11px; border: 1px solid color-mix(in srgb, var(--primary) 38%, var(--background)); border-radius: 10px; background: var(--background); color: var(--text); font: inherit; }
+    .manager-dialog :focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
     .admin-status, .itinerary-status { min-height: 1.7em; margin: 0; color: var(--primary); font-size: 15px; }
     .admin-actions .vote-submit:disabled { cursor: not-allowed; opacity: .55; }
 
@@ -314,12 +315,7 @@
 
     .editor-button:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
     .editor-button.danger { border-color: #9C3F36; color: #85362F; }
-    .stop-editor-actions { margin-top: 10px; }
-    .day-editor-actions { padding: 0 21px 16px; }
-    .itinerary-editor-form { display: grid; grid-column: 1 / -1; gap: 10px; width: 100%; }
-    .itinerary-editor-form textarea { min-height: 88px; resize: vertical; }
     .editor-label { display: grid; gap: 5px; font-weight: 700; }
-    .editor-label select { min-height: 46px; padding: 8px 10px; border: 1px solid color-mix(in srgb, var(--primary) 38%, var(--background)); border-radius: 10px; background: var(--background); color: var(--text); font: inherit; }
     .editor-label :focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
 
     @media (min-width: 600px) {
@@ -328,7 +324,6 @@
       .poll-state { padding-right: 25px; padding-left: 25px; }
       .organizer-form { margin-right: 25px; margin-left: 25px; }
       .admin-content { padding-right: 25px; padding-left: 25px; }
-      .day-editor-actions { padding-right: 25px; padding-left: 25px; }
     }
   </style>
 </head>
@@ -365,17 +360,10 @@
         </li>
       </ul>
     </section>
-    <section class="section-manager" id="section-manager" aria-labelledby="section-manager-heading" hidden>
-      <h3 class="day-manager-heading" id="section-manager-heading">新增首頁資訊區塊</h3>
-      <form class="day-manager-row" id="new-info-section-form">
-        <label class="editor-label">新區塊名稱 <input name="title" type="text" maxlength="80" placeholder="例如：必吃東西" required></label>
-        <button class="editor-button" type="submit">新增資訊區塊</button>
-      </form>
-    </section>
     </div>
 
     <section class="day itinerary-admin" aria-labelledby="itinerary-admin-heading">
-      <h2 class="day-heading" id="itinerary-admin-heading">主揪行程管理 <span>新增、修改或刪除站點</span></h2>
+      <h2 class="day-heading" id="itinerary-admin-heading">主揪行程管理 <span>編輯功能集中在彈窗裡</span></h2>
       <div class="admin-content">
         <form class="admin-access-form" id="organizer-access-form">
           <label class="vote-field" for="itinerary-organizer-phrase">主揪密語
@@ -384,6 +372,8 @@
           <div class="admin-actions">
             <button class="vote-submit" id="organizer-unlock-submit" type="submit">解鎖行程編輯</button>
             <button class="editor-button" id="organizer-lock" type="button" hidden>鎖定編輯</button>
+            <button class="editor-button" id="open-itinerary-manager" type="button" hidden>管理天數與行程</button>
+            <button class="editor-button" id="open-info-manager" type="button" hidden>管理首頁資訊區塊</button>
             <button class="editor-button danger" id="close-poll-submit" type="button" disabled>結束晚餐投票</button>
           </div>
         </form>
@@ -530,6 +520,15 @@
       <img src="Course-QR.png" alt="宮古島行程 QR 碼" width="240" height="240" style="display: inline-block; max-width: 100%; height: auto;">
     </p>
     <p class="footer-note">店名與時間皆為示意，請依航班、交通、天候和海況調整</p>
+    <dialog class="manager-dialog" id="manager-dialog" aria-labelledby="manager-dialog-title">
+      <div class="manager-dialog-shell">
+        <header class="manager-dialog-header">
+          <h2 id="manager-dialog-title">管理</h2>
+          <button class="editor-button" id="close-manager-dialog" type="button">關閉</button>
+        </header>
+        <div class="manager-dialog-body" id="manager-dialog-body"></div>
+      </div>
+    </dialog>
   </main>
   <script>
     (() => {
@@ -561,6 +560,12 @@
       const organizerPhraseInput = document.getElementById("itinerary-organizer-phrase");
       const unlockButton = document.getElementById("organizer-unlock-submit");
       const lockButton = document.getElementById("organizer-lock");
+      const openItineraryManagerButton = document.getElementById("open-itinerary-manager");
+      const openInfoManagerButton = document.getElementById("open-info-manager");
+      const managerDialog = document.getElementById("manager-dialog");
+      const managerDialogTitle = document.getElementById("manager-dialog-title");
+      const managerDialogBody = document.getElementById("manager-dialog-body");
+      const closeManagerDialogButton = document.getElementById("close-manager-dialog");
       const organizerAccessStatus = document.getElementById("organizer-access-status");
       const closePollButton = document.getElementById("close-poll-submit");
       const countsList = document.getElementById("dinner-vote-counts");
@@ -568,8 +573,6 @@
       const itineraryContainer = document.getElementById("itinerary-days");
       const itineraryStatus = document.getElementById("itinerary-status");
       const infoContainer = document.getElementById("trip-info-sections");
-      const sectionManager = document.getElementById("section-manager");
-      const newInfoSectionForm = document.getElementById("new-info-section-form");
       let organizerPhrase = null;
       let itineraryStops = [];
       let infoSections = [];
@@ -617,6 +620,8 @@
         unlockButton.hidden = unlocked;
         organizerPhraseInput.disabled = unlocked;
         lockButton.hidden = !unlocked;
+        openItineraryManagerButton.hidden = !unlocked;
+        openInfoManagerButton.hidden = !unlocked;
         closePollButton.disabled = !unlocked || !pollStatusKnown || pollIsClosed;
       }
 
@@ -706,82 +711,6 @@
         return label;
       }
 
-      function createStopEditor(stop, defaultDay) {
-        const editor = document.createElement("form");
-        editor.className = "itinerary-editor-form";
-
-        const dayLabel = document.createElement("label");
-        dayLabel.className = "editor-label";
-        dayLabel.append(document.createTextNode("安排日期"));
-        const daySelect = document.createElement("select");
-        daySelect.name = "day_number";
-        for (const day of itineraryDays) {
-          const option = document.createElement("option");
-          option.value = String(day.number);
-          option.textContent = `第${day.number}天`;
-          option.selected = day.number === Number(stop?.day_number ?? defaultDay);
-          daySelect.append(option);
-        }
-        dayLabel.append(daySelect);
-
-        const timeValue = stop?.start_time?.slice(0, 5) || "09:00";
-        editor.append(
-          dayLabel,
-          makeEditorField("時間", "start_time", timeValue, "time"),
-          makeEditorField("地點／行程", "place", stop?.place || "", "text", 120),
-          makeEditorField("說明", "description", stop?.description || "", "textarea")
-        );
-
-        const actions = document.createElement("div");
-        actions.className = "stop-editor-actions";
-        const save = document.createElement("button");
-        save.className = "vote-submit";
-        save.type = "submit";
-        save.textContent = stop ? "儲存修改" : "新增行程站";
-        const cancel = document.createElement("button");
-        cancel.className = "editor-button";
-        cancel.type = "button";
-        cancel.textContent = "取消";
-        cancel.addEventListener("click", renderItinerary);
-        actions.append(save, cancel);
-        editor.append(actions);
-
-        editor.addEventListener("submit", async (event) => {
-          event.preventDefault();
-          if (!organizerPhrase) return;
-          const stopData = {
-            day_number: Number(daySelect.value),
-            start_time: editor.elements.namedItem("start_time").value,
-            place: editor.elements.namedItem("place").value.trim(),
-            description: editor.elements.namedItem("description").value.trim()
-          };
-          save.disabled = true;
-          itineraryStatus.textContent = "正在儲存行程…";
-          try {
-            const savedMessage = stop ? "行程已更新。" : "已新增行程站。";
-            if (stop) {
-              await callItineraryFunction("update", { id: stop.id, stop: stopData });
-            } else {
-              await callItineraryFunction("create", { stop: stopData });
-            }
-            await loadItinerary();
-            itineraryStatus.textContent = savedMessage;
-          } catch (error) {
-            if (error.status === 403) {
-              organizerPhrase = null;
-              updateAdminControls();
-              renderItinerary();
-              organizerAccessStatus.textContent = "密語驗證失效，請重新解鎖。";
-            }
-            itineraryStatus.textContent = error.status === 403
-              ? "沒有行程修改權限。"
-              : "儲存失敗，請確認資料後再試。";
-            save.disabled = false;
-          }
-        });
-        return editor;
-      }
-
       function renderItinerary() {
         const fragment = document.createDocumentFragment();
         for (const day of itineraryDays) {
@@ -796,43 +725,8 @@
           const subtitle = document.createElement("span");
           subtitle.textContent = day.subtitle;
           heading.append(subtitle);
-          if (organizerPhrase) {
-            const dayActions = document.createElement("span");
-            dayActions.className = "day-heading-actions";
-            const editDay = document.createElement("button");
-            editDay.className = "editor-button";
-            editDay.type = "button";
-            editDay.textContent = "修改天數";
-            editDay.setAttribute("aria-label", `修改第${day.number}天名稱或編號`);
-            editDay.addEventListener("click", () => {
-              if (section.querySelector(".day-inline-editor")) return;
-              section.insertBefore(createDayEditor(day), list);
-            });
-            const deleteDay = document.createElement("button");
-            deleteDay.className = "editor-button danger";
-            deleteDay.type = "button";
-            deleteDay.textContent = "刪除天數";
-            deleteDay.setAttribute("aria-label", `刪除第${day.number}天`);
-            deleteDay.addEventListener("click", async () => {
-              if (!window.confirm(`確定刪除「第${day.number}天 ${day.subtitle}」嗎？該天需先沒有行程站。`)) return;
-              deleteDay.disabled = true;
-              try {
-                await callItineraryFunction("delete-day", { day_number: day.number });
-                await loadItinerary();
-                itineraryStatus.textContent = `第${day.number}天已刪除。`;
-              } catch (error) {
-                itineraryStatus.textContent = error.status === 409
-                  ? "這一天還有行程站，請先把站點移到其他天或刪除，再刪除天數。"
-                  : "刪除天數失敗，請稍後再試。";
-                deleteDay.disabled = false;
-              }
-            });
-            dayActions.append(editDay, deleteDay);
-            heading.append(dayActions);
-          }
           const list = document.createElement("ol");
           list.className = "stops";
-
           const dayStops = itineraryStops.filter((stop) => Number(stop.day_number) === day.number);
           for (const stop of dayStops) {
             const item = document.createElement("li");
@@ -849,186 +743,22 @@
             description.className = "description";
             description.textContent = stop.description;
             content.append(place, description);
-
-            if (organizerPhrase) {
-              const actions = document.createElement("div");
-              actions.className = "stop-editor-actions";
-              const edit = document.createElement("button");
-              edit.className = "editor-button";
-              edit.type = "button";
-              edit.textContent = "編輯";
-              edit.setAttribute("aria-label", `編輯第${day.number}天 ${stop.place}`);
-              edit.addEventListener("click", () => {
-                content.replaceChildren(createStopEditor(stop, day.number));
-              });
-              const remove = document.createElement("button");
-              remove.className = "editor-button danger";
-              remove.type = "button";
-              remove.textContent = "刪除";
-              remove.setAttribute("aria-label", `刪除第${day.number}天 ${stop.place}`);
-              remove.addEventListener("click", async () => {
-                if (!window.confirm(`確定刪除「${stop.place}」這個行程站嗎？`)) return;
-                remove.disabled = true;
-                itineraryStatus.textContent = "正在刪除行程…";
-                try {
-                  await callItineraryFunction("delete", { id: stop.id });
-                  await loadItinerary();
-                  itineraryStatus.textContent = "行程站已刪除。";
-                } catch {
-                  itineraryStatus.textContent = "刪除失敗，請重新整理後再試。";
-                  remove.disabled = false;
-                }
-              });
-              actions.append(edit, remove);
-              content.append(actions);
-            }
             item.append(time, content);
             list.append(item);
           }
-
-          if (dayStops.length === 0) {
+          if (!dayStops.length) {
             const empty = document.createElement("li");
             empty.className = "stop";
             empty.textContent = "這一天還沒有安排行程站。";
             list.append(empty);
           }
           section.append(heading, list);
-
-          if (organizerPhrase) {
-            const addActions = document.createElement("div");
-            addActions.className = "day-editor-actions";
-            const add = document.createElement("button");
-            add.className = "editor-button";
-            add.type = "button";
-            add.textContent = "+ 新增行程站";
-            add.addEventListener("click", () => {
-              const item = document.createElement("li");
-              item.className = "stop";
-              item.append(createStopEditor(null, day.number));
-              list.append(item);
-              item.querySelector("input[name='start_time']").focus();
-            });
-            addActions.append(add);
-            section.append(addActions);
-          }
           fragment.append(section);
-        }
-        if (organizerPhrase) {
-          const addDayActions = document.createElement("div");
-          addDayActions.className = "day-editor-actions";
-          const addDay = document.createElement("button");
-          addDay.className = "editor-button";
-          addDay.type = "button";
-          addDay.textContent = "+ 新增天數";
-          addDay.disabled = itineraryDays.length >= 30;
-          addDay.addEventListener("click", () => {
-            if (itineraryContainer.querySelector(".day-inline-editor")) return;
-            itineraryContainer.append(createDayEditor(null));
-            itineraryContainer.querySelector(".day-inline-editor input[name='day_number']")?.focus();
-          });
-          addDayActions.append(addDay);
-          fragment.append(addDayActions);
         }
         itineraryContainer.replaceChildren(fragment);
       }
 
-      function createDayEditor(day) {
-        const editor = document.createElement("form");
-        editor.className = "day-inline-editor";
-        const nextNumber = Math.min(30, Math.max(0, ...itineraryDays.map((item) => Number(item.number))) + 1);
-        const numberField = makeEditorField("天數編號", "day_number", String(day?.number ?? nextNumber), "number", 2);
-        numberField.querySelector("input").min = "1";
-        numberField.querySelector("input").max = "30";
-        const titleField = makeEditorField("天數名稱", "subtitle", day?.subtitle || "", "text", 100);
-        const actions = document.createElement("div");
-        actions.className = "day-editor-actions";
-        actions.style.padding = "0";
-        const save = document.createElement("button");
-        save.className = "vote-submit";
-        save.type = "submit";
-        save.textContent = day ? "儲存天數" : "新增天數";
-        const cancel = document.createElement("button");
-        cancel.className = "editor-button";
-        cancel.type = "button";
-        cancel.textContent = "取消";
-        cancel.addEventListener("click", renderItinerary);
-        actions.append(save, cancel);
-        editor.append(numberField, titleField, actions);
-        editor.addEventListener("submit", async (event) => {
-          event.preventDefault();
-          if (!organizerPhrase) return;
-          const nextDay = {
-            day_number: Number(editor.elements.namedItem("day_number").value),
-            subtitle: editor.elements.namedItem("subtitle").value.trim()
-          };
-          save.disabled = true;
-          try {
-            if (day) {
-              await callItineraryFunction("update-day", { day_number: day.number, day: nextDay });
-            } else {
-              await callItineraryFunction("create-day", { day: nextDay });
-            }
-            await loadItinerary();
-            itineraryStatus.textContent = day ? "天數已更新。" : `第${nextDay.day_number}天已新增。`;
-          } catch (error) {
-            itineraryStatus.textContent = error.status === 409
-              ? "這個天數編號已使用，或該天仍有行程站無法刪除。"
-              : "天數儲存失敗，請確認資料後再試。";
-            save.disabled = false;
-          }
-        });
-        return editor;
-      }
-
-      function createInfoItemEditor(sectionId, item = null) {
-        const editor = document.createElement("form");
-        editor.className = "info-editor-form";
-        editor.append(
-          makeEditorField("項目名稱", "label", item?.label || "", "text", 80),
-          makeEditorField("內容說明", "details", item?.details || "", "textarea")
-        );
-        const actions = document.createElement("div");
-        actions.className = "info-admin-actions";
-        const save = document.createElement("button");
-        save.className = "vote-submit";
-        save.type = "submit";
-        save.textContent = item ? "儲存項目" : "新增項目";
-        const cancel = document.createElement("button");
-        cancel.className = "editor-button";
-        cancel.type = "button";
-        cancel.textContent = "取消";
-        cancel.addEventListener("click", renderInfoSections);
-        actions.append(save, cancel);
-        editor.append(actions);
-        editor.addEventListener("submit", async (event) => {
-          event.preventDefault();
-          if (!organizerPhrase) return;
-          const itemData = {
-            label: editor.elements.namedItem("label").value.trim(),
-            details: editor.elements.namedItem("details").value.trim()
-          };
-          save.disabled = true;
-          try {
-            if (item) await callItineraryFunction("update-item", { id: item.id, item: itemData });
-            else await callItineraryFunction("create-item", { section_id: sectionId, item: itemData });
-            await loadInfoSections();
-            itineraryStatus.textContent = item ? "區塊項目已更新。" : "已新增區塊項目。";
-          } catch (error) {
-            if (error.status === 403) {
-              organizerPhrase = null;
-              updateAdminControls();
-              renderInfoSections();
-              organizerAccessStatus.textContent = "密語驗證失效，請重新解鎖。";
-            }
-            itineraryStatus.textContent = "區塊項目儲存失敗，請確認資料後再試。";
-            save.disabled = false;
-          }
-        });
-        return editor;
-      }
-
       function renderInfoSections() {
-        sectionManager.hidden = !organizerPhrase;
         const fragment = document.createDocumentFragment();
         for (const sectionData of infoSections) {
           const section = document.createElement("section");
@@ -1058,33 +788,6 @@
             details.className = "place";
             details.textContent = row.details;
             body.append(details);
-            if (organizerPhrase) {
-              const actions = document.createElement("div");
-              actions.className = "info-admin-actions";
-              const edit = document.createElement("button");
-              edit.className = "editor-button";
-              edit.type = "button";
-              edit.textContent = "修改項目";
-              edit.addEventListener("click", () => body.replaceChildren(createInfoItemEditor(sectionData.id, row)));
-              const remove = document.createElement("button");
-              remove.className = "editor-button danger";
-              remove.type = "button";
-              remove.textContent = "刪除項目";
-              remove.addEventListener("click", async () => {
-                if (!window.confirm(`確定刪除「${row.label}」嗎？`)) return;
-                remove.disabled = true;
-                try {
-                  await callItineraryFunction("delete-item", { id: row.id });
-                  await loadInfoSections();
-                  itineraryStatus.textContent = "區塊項目已刪除。";
-                } catch {
-                  itineraryStatus.textContent = "刪除項目失敗，請稍後再試。";
-                  remove.disabled = false;
-                }
-              });
-              actions.append(edit, remove);
-              body.append(actions);
-            }
             item.append(label, body);
             list.append(item);
           }
@@ -1095,97 +798,364 @@
             list.append(empty);
           }
           section.append(heading, list);
-          if (organizerPhrase) {
-            const admin = document.createElement("div");
-            admin.className = "day-editor-actions";
-            const rename = document.createElement("button");
-            rename.className = "editor-button";
-            rename.type = "button";
-            rename.textContent = "修改區塊名稱";
-            rename.addEventListener("click", () => {
-              const editor = document.createElement("form");
-              editor.className = "info-editor-form";
-              editor.append(makeEditorField("區塊名稱", "title", sectionData.title, "text", 80));
-              const save = document.createElement("button");
-              save.className = "editor-button";
-              save.type = "submit";
-              save.textContent = "儲存名稱";
-              editor.append(save);
-              section.append(editor);
-              editor.addEventListener("submit", async (event) => {
-                event.preventDefault();
-                save.disabled = true;
-                try {
-                  await callItineraryFunction("update-section", {
-                    id: sectionData.id,
-                    section: { title: editor.elements.namedItem("title").value.trim() }
-                  });
-                  await loadInfoSections();
-                  itineraryStatus.textContent = "區塊名稱已更新。";
-                } catch {
-                  itineraryStatus.textContent = "區塊名稱更新失敗，請確認內容後再試。";
-                  save.disabled = false;
-                }
-              });
-              rename.disabled = true;
-            });
-            const addItem = document.createElement("button");
-            addItem.className = "editor-button";
-            addItem.type = "button";
-            addItem.textContent = "+ 新增項目";
-            addItem.addEventListener("click", () => {
-              addItem.disabled = true;
-              section.append(createInfoItemEditor(sectionData.id));
-            });
-            const remove = document.createElement("button");
-            remove.className = "editor-button danger";
-            remove.type = "button";
-            remove.textContent = "刪除區塊";
-            remove.addEventListener("click", async () => {
-              if (!window.confirm(`確定刪除「${sectionData.title}」區塊及裡面的所有項目嗎？`)) return;
-              remove.disabled = true;
-              try {
-                await callItineraryFunction("delete-section", { id: sectionData.id });
-                await loadInfoSections();
-                itineraryStatus.textContent = "資訊區塊已刪除。";
-              } catch {
-                itineraryStatus.textContent = "刪除區塊失敗，請稍後再試。";
-                remove.disabled = false;
-              }
-            });
-            admin.append(rename, addItem, remove);
-            section.append(admin);
-          }
           fragment.append(section);
         }
         infoContainer.replaceChildren(fragment);
-        infoContainer.append(sectionManager);
       }
 
-      newInfoSectionForm.addEventListener("submit", async (event) => {
-        event.preventDefault();
-        if (!organizerPhrase) return;
-        const submit = newInfoSectionForm.querySelector("button[type='submit']");
-        submit.disabled = true;
-        try {
-          const title = newInfoSectionForm.elements.namedItem("title").value.trim();
-          await callItineraryFunction("create-section", { section: { title } });
-          newInfoSectionForm.reset();
-          await loadInfoSections();
-          itineraryStatus.textContent = `「${title}」區塊已新增。`;
-        } catch (error) {
-          if (error.status === 403) {
-            organizerPhrase = null;
-            updateAdminControls();
-            renderInfoSections();
-            organizerAccessStatus.textContent = "密語驗證失效，請重新解鎖。";
-          }
-          itineraryStatus.textContent = "新增區塊失敗，請確認名稱後再試。";
-        } finally {
-          submit.disabled = false;
-        }
-      });
+      function showManager(title, content) {
+        managerDialogTitle.textContent = title;
+        managerDialogBody.replaceChildren(content);
+        if (!managerDialog.open) managerDialog.showModal();
+      }
 
+      function managerButton(label, handler, danger = false) {
+        const button = document.createElement("button");
+        button.className = danger ? "editor-button danger" : "editor-button";
+        button.type = "button";
+        button.textContent = label;
+        button.addEventListener("click", handler);
+        return button;
+      }
+
+      function managerRow(title, description, buttons) {
+        const row = document.createElement("article");
+        row.className = "manager-row";
+        const main = document.createElement("div");
+        main.className = "manager-row-main";
+        const heading = document.createElement("strong");
+        heading.textContent = title;
+        main.append(heading);
+        if (description) {
+          const note = document.createElement("span");
+          note.textContent = description;
+          main.append(note);
+        }
+        const actions = document.createElement("div");
+        actions.className = "manager-row-actions";
+        actions.append(...buttons);
+        row.append(main, actions);
+        return row;
+      }
+
+      function managerNotice(message) {
+        const note = document.createElement("p");
+        note.className = "admin-status";
+        note.setAttribute("role", "status");
+        note.textContent = message;
+        managerDialogBody.prepend(note);
+      }
+
+      async function handleManagerError(error, fallbackMessage) {
+        if (error.status === 403) {
+          organizerPhrase = null;
+          managerDialog.close();
+          updateAdminControls();
+          renderItinerary();
+          renderInfoSections();
+          organizerAccessStatus.textContent = "密語驗證失效，請重新解鎖。";
+        }
+        itineraryStatus.textContent = error.status === 403 ? "沒有管理權限，請重新解鎖。" : fallbackMessage;
+      }
+
+      function showDayManager() {
+        const content = document.createElement("div");
+        content.className = "manager-content";
+        const add = managerButton("+ 新增天數", () => showDayForm());
+        add.disabled = itineraryDays.length >= 30;
+        content.append(add);
+        for (const day of itineraryDays) {
+          const stopCount = itineraryStops.filter((stop) => Number(stop.day_number) === day.number).length;
+          content.append(managerRow(
+            `第${day.number}天｜${day.subtitle}`,
+            `${stopCount} 個行程站`,
+            [
+              managerButton("管理行程站", () => showDayStops(day.number)),
+              managerButton("修改天數", () => showDayForm(day)),
+              managerButton("刪除天數", async () => {
+                if (!window.confirm(`確定刪除「第${day.number}天 ${day.subtitle}」嗎？該天需先沒有行程站。`)) return;
+                try {
+                  await callItineraryFunction("delete-day", { day_number: day.number });
+                  await loadItinerary();
+                  showDayManager();
+                  itineraryStatus.textContent = `第${day.number}天已刪除。`;
+                } catch (error) {
+                  managerNotice(error.status === 409
+                    ? "這一天還有行程站，請先移到其他天或刪除站點，再刪除天數。"
+                    : "刪除天數失敗，請稍後再試。");
+                }
+              }, true)
+            ]
+          ));
+        }
+        showManager("天數與行程管理", content);
+      }
+
+      function showDayForm(day = null) {
+        const form = document.createElement("form");
+        form.className = "manager-form";
+        const nextNumber = Math.min(30, Math.max(0, ...itineraryDays.map((item) => Number(item.number))) + 1);
+        const numberField = makeEditorField("天數編號", "day_number", String(day?.number ?? nextNumber), "number", 2);
+        numberField.querySelector("input").min = "1";
+        numberField.querySelector("input").max = "30";
+        const titleField = makeEditorField("天數名稱", "subtitle", day?.subtitle || "", "text", 100);
+        const actions = document.createElement("div");
+        actions.className = "manager-row-actions";
+        const save = document.createElement("button");
+        save.className = "vote-submit";
+        save.type = "submit";
+        save.textContent = day ? "儲存天數" : "建立天數並安排站點";
+        actions.append(save, managerButton("返回", showDayManager));
+        form.append(numberField, titleField, actions);
+        form.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          const nextDay = {
+            day_number: Number(form.elements.namedItem("day_number").value),
+            subtitle: form.elements.namedItem("subtitle").value.trim()
+          };
+          save.disabled = true;
+          try {
+            if (day) {
+              await callItineraryFunction("update-day", { day_number: day.number, day: nextDay });
+              await loadItinerary();
+              showDayManager();
+              itineraryStatus.textContent = "天數已更新。";
+            } else {
+              await callItineraryFunction("create-day", { day: nextDay });
+              await loadItinerary();
+              showDayStops(nextDay.day_number);
+              itineraryStatus.textContent = `第${nextDay.day_number}天已建立，可以接著新增行程站。`;
+            }
+          } catch (error) {
+            managerNotice(error.status === 409
+              ? "這個天數編號已經使用，請改用其他編號。"
+              : "天數儲存失敗，請確認內容後再試。");
+            save.disabled = false;
+          }
+        });
+        showManager(day ? `修改第${day.number}天` : "新增天數", form);
+      }
+
+      function showDayStops(dayNumber) {
+        const day = itineraryDays.find((item) => item.number === Number(dayNumber));
+        if (!day) return showDayManager();
+        const content = document.createElement("div");
+        content.className = "manager-content";
+        const topActions = document.createElement("div");
+        topActions.className = "manager-row-actions";
+        topActions.append(
+          managerButton("返回天數列表", showDayManager),
+          managerButton("+ 新增行程站", () => showStopForm(day.number))
+        );
+        content.append(topActions);
+        const dayStops = itineraryStops.filter((stop) => Number(stop.day_number) === day.number);
+        if (!dayStops.length) {
+          const empty = document.createElement("p");
+          empty.textContent = "這一天還沒有行程站。可以直接新增時間、地點和說明。";
+          content.append(empty);
+        }
+        for (const stop of dayStops) {
+          content.append(managerRow(
+            `${stop.start_time.slice(0, 5)}｜${stop.place}`,
+            stop.description,
+            [
+              managerButton("修改", () => showStopForm(day.number, stop)),
+              managerButton("刪除", async () => {
+                if (!window.confirm(`確定刪除「${stop.place}」這個行程站嗎？`)) return;
+                try {
+                  await callItineraryFunction("delete", { id: stop.id });
+                  await loadItinerary();
+                  showDayStops(day.number);
+                  itineraryStatus.textContent = "行程站已刪除。";
+                } catch (error) {
+                  managerNotice("刪除行程站失敗，請稍後再試。");
+                }
+              }, true)
+            ]
+          ));
+        }
+        showManager(`第${day.number}天｜${day.subtitle}`, content);
+      }
+
+      function showStopForm(dayNumber, stop = null) {
+        const form = document.createElement("form");
+        form.className = "manager-form";
+        form.append(
+          makeEditorField("時間", "start_time", stop?.start_time?.slice(0, 5) || "09:00", "time"),
+          makeEditorField("地點／行程", "place", stop?.place || "", "text", 120),
+          makeEditorField("說明", "description", stop?.description || "", "textarea")
+        );
+        const actions = document.createElement("div");
+        actions.className = "manager-row-actions";
+        const save = document.createElement("button");
+        save.className = "vote-submit";
+        save.type = "submit";
+        save.textContent = stop ? "儲存行程站" : "新增行程站";
+        actions.append(save, managerButton("返回", () => showDayStops(dayNumber)));
+        form.append(actions);
+        form.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          const stopData = {
+            day_number: dayNumber,
+            start_time: form.elements.namedItem("start_time").value,
+            place: form.elements.namedItem("place").value.trim(),
+            description: form.elements.namedItem("description").value.trim()
+          };
+          save.disabled = true;
+          try {
+            if (stop) await callItineraryFunction("update", { id: stop.id, stop: stopData });
+            else await callItineraryFunction("create", { stop: stopData });
+            await loadItinerary();
+            showDayStops(dayNumber);
+            itineraryStatus.textContent = stop ? "行程站已更新。" : "行程站已新增。";
+          } catch (error) {
+            await handleManagerError(error, "行程站儲存失敗，請確認資料後再試。");
+            save.disabled = false;
+          }
+        });
+        showManager(stop ? "修改行程站" : "新增行程站", form);
+      }
+
+      function showInfoSectionManager() {
+        const content = document.createElement("div");
+        content.className = "manager-content";
+        content.append(managerButton("+ 新增資訊區塊", () => showInfoSectionForm()));
+        if (!infoSections.length) {
+          const empty = document.createElement("p");
+          empty.textContent = "目前沒有首頁資訊區塊。";
+          content.append(empty);
+        }
+        for (const section of infoSections) {
+          const itemCount = infoItems.filter((item) => item.section_id === section.id).length;
+          content.append(managerRow(section.title, `${itemCount} 個項目`, [
+            managerButton("管理項目", () => showInfoItems(section.id)),
+            managerButton("修改名稱", () => showInfoSectionForm(section)),
+            managerButton("刪除區塊", async () => {
+              if (!window.confirm(`確定刪除「${section.title}」區塊及其所有項目嗎？`)) return;
+              try {
+                await callItineraryFunction("delete-section", { id: section.id });
+                await loadInfoSections();
+                showInfoSectionManager();
+                itineraryStatus.textContent = "資訊區塊已刪除。";
+              } catch (error) {
+                managerNotice("刪除資訊區塊失敗，請稍後再試。");
+              }
+            }, true)
+          ]));
+        }
+        showManager("首頁資訊區塊管理", content);
+      }
+
+      function showInfoSectionForm(section = null) {
+        const form = document.createElement("form");
+        form.className = "manager-form";
+        form.append(makeEditorField("區塊名稱", "title", section?.title || "", "text", 80));
+        const actions = document.createElement("div");
+        actions.className = "manager-row-actions";
+        const save = document.createElement("button");
+        save.className = "vote-submit";
+        save.type = "submit";
+        save.textContent = section ? "儲存名稱" : "建立區塊並新增項目";
+        actions.append(save, managerButton("返回", showInfoSectionManager));
+        form.append(actions);
+        form.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          const title = form.elements.namedItem("title").value.trim();
+          save.disabled = true;
+          try {
+            if (section) {
+              await callItineraryFunction("update-section", { id: section.id, section: { title } });
+              await loadInfoSections();
+              showInfoSectionManager();
+              itineraryStatus.textContent = "區塊名稱已更新。";
+            } else {
+              const result = await callItineraryFunction("create-section", { section: { title } });
+              await loadInfoSections();
+              showInfoItems(result.section.id);
+              itineraryStatus.textContent = `「${title}」區塊已建立，可以接著新增項目。`;
+            }
+          } catch (error) {
+            await handleManagerError(error, "區塊名稱儲存失敗，請確認名稱後再試。");
+            save.disabled = false;
+          }
+        });
+        showManager(section ? "修改資訊區塊" : "新增資訊區塊", form);
+      }
+
+      function showInfoItems(sectionId) {
+        const section = infoSections.find((item) => item.id === sectionId);
+        if (!section) return showInfoSectionManager();
+        const content = document.createElement("div");
+        content.className = "manager-content";
+        const topActions = document.createElement("div");
+        topActions.className = "manager-row-actions";
+        topActions.append(
+          managerButton("返回區塊列表", showInfoSectionManager),
+          managerButton("+ 新增項目", () => showInfoItemForm(section.id))
+        );
+        content.append(topActions);
+        const rows = infoItems.filter((item) => item.section_id === section.id);
+        if (!rows.length) {
+          const empty = document.createElement("p");
+          empty.textContent = "這個區塊還沒有項目，可以新增第一項。";
+          content.append(empty);
+        }
+        for (const row of rows) {
+          content.append(managerRow(row.label, row.details, [
+            managerButton("修改", () => showInfoItemForm(section.id, row)),
+            managerButton("刪除", async () => {
+              if (!window.confirm(`確定刪除「${row.label}」嗎？`)) return;
+              try {
+                await callItineraryFunction("delete-item", { id: row.id });
+                await loadInfoSections();
+                showInfoItems(section.id);
+                itineraryStatus.textContent = "區塊項目已刪除。";
+              } catch (error) {
+                managerNotice("刪除區塊項目失敗，請稍後再試。");
+              }
+            }, true)
+          ]));
+        }
+        showManager(section.title, content);
+      }
+
+      function showInfoItemForm(sectionId, item = null) {
+        const section = infoSections.find((row) => row.id === sectionId);
+        const form = document.createElement("form");
+        form.className = "manager-form";
+        form.append(
+          makeEditorField("項目名稱", "label", item?.label || "", "text", 80),
+          makeEditorField("內容說明", "details", item?.details || "", "textarea")
+        );
+        form.elements.namedItem("details").required = false;
+        const actions = document.createElement("div");
+        actions.className = "manager-row-actions";
+        const save = document.createElement("button");
+        save.className = "vote-submit";
+        save.type = "submit";
+        save.textContent = item ? "儲存項目" : "新增項目";
+        actions.append(save, managerButton("返回", () => showInfoItems(sectionId)));
+        form.append(actions);
+        form.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          const itemData = {
+            label: form.elements.namedItem("label").value.trim(),
+            details: form.elements.namedItem("details").value.trim()
+          };
+          save.disabled = true;
+          try {
+            if (item) await callItineraryFunction("update-item", { id: item.id, item: itemData });
+            else await callItineraryFunction("create-item", { section_id: sectionId, item: itemData });
+            await loadInfoSections();
+            showInfoItems(sectionId);
+            itineraryStatus.textContent = item ? "區塊項目已更新。" : "區塊項目已新增。";
+          } catch (error) {
+            await handleManagerError(error, "區塊項目儲存失敗，請確認資料後再試。");
+            save.disabled = false;
+          }
+        });
+        showManager(item ? "修改區塊項目" : `新增「${section?.title || "資訊"}」項目`, form);
+      }
       async function fetchAllVotes() {
         const votes = [];
         for (let offset = 0; ; offset += PAGE_SIZE) {
@@ -1249,7 +1219,7 @@
           await callItineraryFunction("authorize", {}, phrase);
           organizerPhrase = phrase;
           organizerPhraseInput.value = "";
-          organizerAccessStatus.textContent = "已解鎖天數與行程管理；離開或重新整理頁面後會自動鎖定。";
+          organizerAccessStatus.textContent = "已解鎖；請選擇要管理的天數與行程，或首頁資訊區塊。離開或重新整理後會自動鎖定。";
           updateAdminControls();
           await loadItinerary();
           await loadInfoSections();
@@ -1263,9 +1233,14 @@
         }
       });
 
+      openItineraryManagerButton.addEventListener("click", showDayManager);
+      openInfoManagerButton.addEventListener("click", showInfoSectionManager);
+      closeManagerDialogButton.addEventListener("click", () => managerDialog.close());
+
       lockButton.addEventListener("click", () => {
         organizerPhrase = null;
         organizerPhraseInput.value = "";
+        if (managerDialog.open) managerDialog.close();
         organizerAccessStatus.textContent = "已鎖定行程編輯；訪客只能查看。";
         updateAdminControls();
         renderItinerary();
