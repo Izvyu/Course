@@ -277,11 +277,43 @@
     .organizer-note { margin: -7px 0 0; color: var(--text); font-size: 15px; }
     .organizer-message { min-height: 1.7em; margin: 0; color: var(--primary); font-size: 15px; }
 
+    .itinerary-admin { margin: 22px 0 0; }
+    .admin-content { display: grid; gap: 12px; padding: 16px 21px 18px; }
+    .admin-access-form { display: grid; gap: 12px; }
+    .admin-actions, .stop-editor-actions, .day-editor-actions { display: flex; flex-wrap: wrap; gap: 9px; }
+    .admin-status, .itinerary-status { min-height: 1.7em; margin: 0; color: var(--primary); font-size: 15px; }
+    .admin-actions .vote-submit:disabled { cursor: not-allowed; opacity: .55; }
+
+    .editor-button {
+      min-height: 42px;
+      padding: 7px 14px;
+      border: 1px solid var(--primary);
+      border-radius: 10px;
+      background: var(--background);
+      color: var(--primary);
+      font: inherit;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .editor-button:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+    .editor-button.danger { border-color: #9C3F36; color: #85362F; }
+    .stop-editor-actions { margin-top: 10px; }
+    .day-editor-actions { padding: 0 21px 16px; }
+    .itinerary-editor-form { display: grid; grid-column: 1 / -1; gap: 10px; width: 100%; }
+    .itinerary-editor-form textarea { min-height: 88px; resize: vertical; }
+    .editor-label { display: grid; gap: 5px; font-weight: 700; }
+    .editor-label select { min-height: 46px; padding: 8px 10px; border: 1px solid color-mix(in srgb, var(--primary) 38%, var(--background)); border-radius: 10px; background: var(--background); color: var(--text); font: inherit; }
+    .editor-label :focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+
     @media (min-width: 600px) {
       .vote-form { padding-right: 25px; padding-left: 25px; }
       .vote-results { padding-right: 25px; padding-left: 25px; }
       .poll-state { padding-right: 25px; padding-left: 25px; }
       .organizer-form { margin-right: 25px; margin-left: 25px; }
+      .admin-content { padding-right: 25px; padding-left: 25px; }
+      .day-editor-actions { padding-right: 25px; padding-left: 25px; }
     }
   </style>
 </head>
@@ -318,7 +350,25 @@
       </ul>
     </section>
 
-    <div class="days">
+    <section class="day itinerary-admin" aria-labelledby="itinerary-admin-heading">
+      <h2 class="day-heading" id="itinerary-admin-heading">主揪行程管理 <span>新增、修改或刪除站點</span></h2>
+      <div class="admin-content">
+        <form class="admin-access-form" id="organizer-access-form">
+          <label class="vote-field" for="itinerary-organizer-phrase">主揪密語
+            <input class="vote-input" id="itinerary-organizer-phrase" name="phrase" type="password" maxlength="120" autocomplete="current-password" required>
+          </label>
+          <div class="admin-actions">
+            <button class="vote-submit" id="organizer-unlock-submit" type="submit">解鎖行程編輯</button>
+            <button class="editor-button" id="organizer-lock" type="button" hidden>鎖定編輯</button>
+            <button class="editor-button danger" id="close-poll-submit" type="button" disabled>結束晚餐投票</button>
+          </div>
+        </form>
+        <p class="admin-status" id="organizer-access-status" role="status" aria-live="polite">訪客可查看行程；主揪輸入密語後可編輯與結束投票。</p>
+      </div>
+    </section>
+    <p class="itinerary-status" id="itinerary-status" role="status" aria-live="polite"></p>
+
+    <div class="days" id="itinerary-days">
       <section class="day" aria-labelledby="day-one">
         <h2 class="day-heading" id="day-one">第一天 <span>抵達宮古・南島海灘</span></h2>
         <ol class="stops">
@@ -433,15 +483,6 @@
     <section class="day" aria-labelledby="dinner-vote-heading">
       <h2 class="day-heading" id="dinner-vote-heading">晚餐投票 <span>一起選想吃的料理！</span></h2>
       <p class="poll-state" id="poll-state" role="status" aria-live="polite">正在確認投票狀態…</p>
-      <form class="organizer-form" id="close-poll-form">
-        <h3 class="organizer-heading">主揪操作</h3>
-        <p class="organizer-note">輸入主揪密語即可結束投票；結束後大家不能再新增投票。</p>
-        <label class="vote-field" for="organizer-phrase">主揪密語
-          <input class="vote-input" id="organizer-phrase" name="phrase" type="password" maxlength="120" autocomplete="current-password" required>
-        </label>
-        <button class="vote-submit" id="close-poll-submit" type="submit">結束投票</button>
-        <p class="organizer-message" id="close-poll-message" role="status" aria-live="polite"></p>
-      </form>
       <form class="vote-form" id="dinner-vote-form">
         <label class="vote-field" for="dinner-voter-nickname">
           暱稱
@@ -473,19 +514,34 @@
       const VOTES_URL = `${SUPABASE_URL}/rest/v1/dinner_votes`;
       const POLL_STATUS_URL = `${SUPABASE_URL}/rest/v1/poll_status?select=is_closed&id=eq.true`;
       const CLOSE_POLL_URL = `${SUPABASE_URL}/functions/v1/close-poll`;
+      const ITINERARY_URL = `${SUPABASE_URL}/rest/v1/itinerary_stops`;
+      const MANAGE_ITINERARY_URL = `${SUPABASE_URL}/functions/v1/manage-itinerary`;
       const PAGE_SIZE = 500;
+      const DAYS = [
+        { number: 1, subtitle: "抵達宮古・南島海灘" },
+        { number: 2, subtitle: "砂山海色・池間島兜風" },
+        { number: 3, subtitle: "伊良部大橋・下地島探險" },
+        { number: 4, subtitle: "東海岸秘境・南島海灣" },
+        { number: 5, subtitle: "平良市區・收心返程" }
+      ];
       const form = document.getElementById("dinner-vote-form");
       const nicknameInput = document.getElementById("dinner-voter-nickname");
       const choiceInput = document.getElementById("dinner-voter-choice");
       const submitButton = document.getElementById("dinner-vote-submit");
       const statusMessage = document.getElementById("dinner-vote-status");
       const pollStateMessage = document.getElementById("poll-state");
-      const closePollForm = document.getElementById("close-poll-form");
-      const organizerPhraseInput = document.getElementById("organizer-phrase");
+      const organizerAccessForm = document.getElementById("organizer-access-form");
+      const organizerPhraseInput = document.getElementById("itinerary-organizer-phrase");
+      const unlockButton = document.getElementById("organizer-unlock-submit");
+      const lockButton = document.getElementById("organizer-lock");
+      const organizerAccessStatus = document.getElementById("organizer-access-status");
       const closePollButton = document.getElementById("close-poll-submit");
-      const closePollMessage = document.getElementById("close-poll-message");
       const countsList = document.getElementById("dinner-vote-counts");
       const emptyMessage = document.getElementById("dinner-vote-empty");
+      const itineraryContainer = document.getElementById("itinerary-days");
+      const itineraryStatus = document.getElementById("itinerary-status");
+      let organizerPhrase = null;
+      let itineraryStops = [];
       let pollIsClosed = false;
       let pollStatusKnown = false;
 
@@ -512,17 +568,257 @@
           pollStateMessage.textContent = pollIsClosed
             ? "投票已結束 🔒"
             : "投票進行中，可以投票！ 🟢";
-          closePollButton.disabled = pollIsClosed;
           if (pollIsClosed) {
             statusMessage.textContent = "投票已結束，現在只能查看票數。";
           }
         } catch {
           pollStatusKnown = false;
           pollStateMessage.textContent = "目前無法確認投票狀態，請稍後重新整理。";
-          closePollButton.disabled = false;
         }
         updateVoteControls();
+        updateAdminControls();
         return pollStatusKnown;
+      }
+
+      function updateAdminControls() {
+        const unlocked = organizerPhrase !== null;
+        unlockButton.hidden = unlocked;
+        organizerPhraseInput.disabled = unlocked;
+        lockButton.hidden = !unlocked;
+        closePollButton.disabled = !unlocked || !pollStatusKnown || pollIsClosed;
+      }
+
+      async function callItineraryFunction(action, details = {}, phrase = organizerPhrase) {
+        if (!phrase) throw new Error("請先解鎖主揪管理");
+        const response = await fetch(MANAGE_ITINERARY_URL, {
+          method: "POST",
+          headers: {
+            apikey: SUPABASE_PUBLISHABLE_KEY,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ action, phrase, ...details })
+        });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          const error = new Error(result.error || "行程更新失敗");
+          error.status = response.status;
+          throw error;
+        }
+        return result;
+      }
+
+      async function loadItinerary() {
+        try {
+          const response = await fetch(
+            `${ITINERARY_URL}?select=id,day_number,start_time,place,description,created_at&order=day_number.asc,start_time.asc,created_at.asc`,
+            { headers: { apikey: SUPABASE_PUBLISHABLE_KEY } }
+          );
+          if (!response.ok) throw new Error("行程讀取失敗");
+          const data = await response.json();
+          if (!Array.isArray(data)) throw new Error("行程資料格式不正確");
+          itineraryStops = data;
+          renderItinerary();
+          itineraryStatus.textContent = `已載入 ${data.length} 個行程站。`;
+        } catch {
+          itineraryStatus.textContent = "目前無法載入雲端行程，先顯示頁面原有內容。";
+        }
+      }
+
+      function makeEditorField(labelText, name, value, type = "text", maxLength = 120) {
+        const label = document.createElement("label");
+        label.className = "editor-label";
+        label.append(document.createTextNode(labelText));
+        const input = document.createElement(type === "textarea" ? "textarea" : "input");
+        input.className = "vote-input";
+        input.name = name;
+        input.required = name !== "description";
+        if (type === "textarea") {
+          input.maxLength = 500;
+          input.value = value ?? "";
+        } else {
+          input.type = type;
+          input.maxLength = maxLength;
+          input.value = value ?? "";
+          if (type === "time") input.step = "60";
+        }
+        label.append(input);
+        return label;
+      }
+
+      function createStopEditor(stop, defaultDay) {
+        const editor = document.createElement("form");
+        editor.className = "itinerary-editor-form";
+
+        const dayLabel = document.createElement("label");
+        dayLabel.className = "editor-label";
+        dayLabel.append(document.createTextNode("安排日期"));
+        const daySelect = document.createElement("select");
+        daySelect.name = "day_number";
+        for (const day of DAYS) {
+          const option = document.createElement("option");
+          option.value = String(day.number);
+          option.textContent = `第${day.number}天`;
+          option.selected = day.number === Number(stop?.day_number ?? defaultDay);
+          daySelect.append(option);
+        }
+        dayLabel.append(daySelect);
+
+        const timeValue = stop?.start_time?.slice(0, 5) || "09:00";
+        editor.append(
+          dayLabel,
+          makeEditorField("時間", "start_time", timeValue, "time"),
+          makeEditorField("地點／行程", "place", stop?.place || "", "text", 120),
+          makeEditorField("說明", "description", stop?.description || "", "textarea")
+        );
+
+        const actions = document.createElement("div");
+        actions.className = "stop-editor-actions";
+        const save = document.createElement("button");
+        save.className = "vote-submit";
+        save.type = "submit";
+        save.textContent = stop ? "儲存修改" : "新增行程站";
+        const cancel = document.createElement("button");
+        cancel.className = "editor-button";
+        cancel.type = "button";
+        cancel.textContent = "取消";
+        cancel.addEventListener("click", renderItinerary);
+        actions.append(save, cancel);
+        editor.append(actions);
+
+        editor.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          if (!organizerPhrase) return;
+          const stopData = {
+            day_number: Number(daySelect.value),
+            start_time: editor.elements.namedItem("start_time").value,
+            place: editor.elements.namedItem("place").value.trim(),
+            description: editor.elements.namedItem("description").value.trim()
+          };
+          save.disabled = true;
+          itineraryStatus.textContent = "正在儲存行程…";
+          try {
+            const savedMessage = stop ? "行程已更新。" : "已新增行程站。";
+            if (stop) {
+              await callItineraryFunction("update", { id: stop.id, stop: stopData });
+            } else {
+              await callItineraryFunction("create", { stop: stopData });
+            }
+            await loadItinerary();
+            itineraryStatus.textContent = savedMessage;
+          } catch (error) {
+            if (error.status === 403) {
+              organizerPhrase = null;
+              updateAdminControls();
+              renderItinerary();
+              organizerAccessStatus.textContent = "密語驗證失效，請重新解鎖。";
+            }
+            itineraryStatus.textContent = error.status === 403
+              ? "沒有行程修改權限。"
+              : "儲存失敗，請確認資料後再試。";
+            save.disabled = false;
+          }
+        });
+        return editor;
+      }
+
+      function renderItinerary() {
+        const fragment = document.createDocumentFragment();
+        for (const day of DAYS) {
+          const section = document.createElement("section");
+          section.className = "day";
+          const headingId = `day-${day.number}`;
+          section.setAttribute("aria-labelledby", headingId);
+          const heading = document.createElement("h2");
+          heading.className = "day-heading";
+          heading.id = headingId;
+          heading.append(document.createTextNode(`第${day.number}天 `));
+          const subtitle = document.createElement("span");
+          subtitle.textContent = day.subtitle;
+          heading.append(subtitle);
+          const list = document.createElement("ol");
+          list.className = "stops";
+
+          const dayStops = itineraryStops.filter((stop) => Number(stop.day_number) === day.number);
+          for (const stop of dayStops) {
+            const item = document.createElement("li");
+            item.className = "stop";
+            const time = document.createElement("time");
+            time.className = "time";
+            time.dateTime = stop.start_time;
+            time.textContent = stop.start_time.slice(0, 5);
+            const content = document.createElement("div");
+            const place = document.createElement("h3");
+            place.className = "place";
+            place.textContent = stop.place;
+            const description = document.createElement("p");
+            description.className = "description";
+            description.textContent = stop.description;
+            content.append(place, description);
+
+            if (organizerPhrase) {
+              const actions = document.createElement("div");
+              actions.className = "stop-editor-actions";
+              const edit = document.createElement("button");
+              edit.className = "editor-button";
+              edit.type = "button";
+              edit.textContent = "編輯";
+              edit.setAttribute("aria-label", `編輯第${day.number}天 ${stop.place}`);
+              edit.addEventListener("click", () => {
+                content.replaceChildren(createStopEditor(stop, day.number));
+              });
+              const remove = document.createElement("button");
+              remove.className = "editor-button danger";
+              remove.type = "button";
+              remove.textContent = "刪除";
+              remove.setAttribute("aria-label", `刪除第${day.number}天 ${stop.place}`);
+              remove.addEventListener("click", async () => {
+                if (!window.confirm(`確定刪除「${stop.place}」這個行程站嗎？`)) return;
+                remove.disabled = true;
+                itineraryStatus.textContent = "正在刪除行程…";
+                try {
+                  await callItineraryFunction("delete", { id: stop.id });
+                  await loadItinerary();
+                  itineraryStatus.textContent = "行程站已刪除。";
+                } catch {
+                  itineraryStatus.textContent = "刪除失敗，請重新整理後再試。";
+                  remove.disabled = false;
+                }
+              });
+              actions.append(edit, remove);
+              content.append(actions);
+            }
+            item.append(time, content);
+            list.append(item);
+          }
+
+          if (dayStops.length === 0) {
+            const empty = document.createElement("li");
+            empty.className = "stop";
+            empty.textContent = "這一天還沒有安排行程站。";
+            list.append(empty);
+          }
+          section.append(heading, list);
+
+          if (organizerPhrase) {
+            const addActions = document.createElement("div");
+            addActions.className = "day-editor-actions";
+            const add = document.createElement("button");
+            add.className = "editor-button";
+            add.type = "button";
+            add.textContent = "+ 新增行程站";
+            add.addEventListener("click", () => {
+              const item = document.createElement("li");
+              item.className = "stop";
+              item.append(createStopEditor(null, day.number));
+              list.append(item);
+              item.querySelector("input[name='start_time']").focus();
+            });
+            addActions.append(add);
+            section.append(addActions);
+          }
+          fragment.append(section);
+        }
+        itineraryContainer.replaceChildren(fragment);
       }
 
       async function fetchAllVotes() {
@@ -577,38 +873,57 @@
         }
       }
 
-      closePollForm.addEventListener("submit", async (event) => {
+      organizerAccessForm.addEventListener("submit", async (event) => {
         event.preventDefault();
         const phrase = organizerPhraseInput.value;
         if (!phrase) return;
-        if (!window.confirm("確定結束晚餐投票嗎？結束後大家將不能再投票。")) return;
-
         closePollButton.disabled = true;
-        closePollMessage.textContent = "正在確認密語…";
+        unlockButton.disabled = true;
+        organizerAccessStatus.textContent = "正在確認主揪密語…";
+        try {
+          await callItineraryFunction("authorize", {}, phrase);
+          organizerPhrase = phrase;
+          organizerPhraseInput.value = "";
+          organizerAccessStatus.textContent = "已解鎖行程編輯；離開或重新整理頁面後會自動鎖定。";
+          updateAdminControls();
+          renderItinerary();
+        } catch (error) {
+          organizerAccessStatus.textContent = error.status === 403
+            ? "密語不正確，尚未解鎖。"
+            : "目前無法驗證密語，請確認網路後再試。";
+        } finally {
+          unlockButton.disabled = false;
+          updateAdminControls();
+        }
+      });
+
+      lockButton.addEventListener("click", () => {
+        organizerPhrase = null;
+        organizerPhraseInput.value = "";
+        organizerAccessStatus.textContent = "已鎖定行程編輯；訪客只能查看。";
+        updateAdminControls();
+        renderItinerary();
+      });
+
+      closePollButton.addEventListener("click", async () => {
+        if (!organizerPhrase || !window.confirm("確定結束晚餐投票嗎？結束後大家將不能再投票。")) return;
+        closePollButton.disabled = true;
+        organizerAccessStatus.textContent = "正在結束晚餐投票…";
         try {
           const response = await fetch(CLOSE_POLL_URL, {
             method: "POST",
-            headers: {
-              apikey: SUPABASE_PUBLISHABLE_KEY,
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ phrase })
+            headers: { apikey: SUPABASE_PUBLISHABLE_KEY, "Content-Type": "application/json" },
+            body: JSON.stringify({ phrase: organizerPhrase })
           });
-          if (response.status === 403) {
-            closePollMessage.textContent = "密語不正確，投票仍然開放。";
-            return;
-          }
+          if (response.status === 403) throw new Error("密語驗證失效");
           if (!response.ok) throw new Error("無法結束投票");
-
-          organizerPhraseInput.value = "";
           await refreshPollStatus();
-          closePollMessage.textContent = pollIsClosed
-            ? "投票已結束，之後無法再新增投票。"
-            : "已送出結束要求，但目前無法確認狀態，請重新整理頁面。";
+          organizerAccessStatus.textContent = pollIsClosed
+            ? "晚餐投票已結束；行程編輯仍可使用。"
+            : "已送出結束要求，請重新整理確認投票狀態。";
         } catch {
-          closePollMessage.textContent = "目前無法結束投票，請確認網路後再試。";
-        } finally {
-          closePollButton.disabled = pollIsClosed;
+          organizerAccessStatus.textContent = "結束投票失敗，請確認網路後再試。";
+          updateAdminControls();
         }
       });
 
@@ -648,6 +963,8 @@
       });
 
       updateVoteControls();
+      updateAdminControls();
+      void loadItinerary();
       void refreshPollStatus();
       void refreshVotes();
     })();
