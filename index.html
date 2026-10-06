@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#612bd1">
+  <title>嗨翻！日本宮古島五天四夜</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #292238;
+      --muted: #665d74;
+      --paper: #fff7dc;
+      --card: #fffefa;
+      --green: #5428a8;
+      --orange: #e84a83;
+      --line: #eadff3;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: radial-gradient(circle at 95% 2%, #ffe0ed 0, transparent 19rem), var(--paper);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", "PingFang TC", sans-serif;
+      font-size: 17px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page {
+      width: min(100% - 32px, 720px);
+      margin: 0 auto;
+      padding: 42px 0 56px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 27px 25px 25px;
+      border-radius: 24px;
+      border: 3px solid #fffefa;
+      outline: 2px solid #ffcf45;
+      background: linear-gradient(135deg, #612bd1, #b52591);
+      color: #fffdf8;
+      box-shadow: 0 10px 0 #f2bd36, 0 16px 30px rgb(64 35 104 / 16%);
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: #ffe46b;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .12em;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(48px, 14vw, 68px);
+      line-height: 1.2;
+      letter-spacing: .12em;
+    }
+
+    .hero-note {
+      margin: 14px 0 0;
+      color: #fff3fc;
+      font-size: 15px;
+      font-weight: 650;
+    }
+
+    .days { display: grid; gap: 24px; margin-top: 26px; }
+
+    .day {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: var(--card);
+      box-shadow: 0 5px 18px rgb(38 52 47 / 4%);
+    }
+
+    .day-heading {
+      display: flex;
+      align-items: baseline;
+      gap: 11px;
+      margin: 0;
+      padding: 18px 21px 15px;
+      border-bottom: 1px solid var(--line);
+      color: var(--green);
+      font-size: 23px;
+      line-height: 1.35;
+    }
+
+    .day-heading span {
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .quick-reminders {
+      margin-top: 20px;
+      border: 2px solid #f3c33d;
+      background: #fff0a8;
+      box-shadow: 0 7px 0 #f3c33d, 0 12px 22px rgb(87 56 104 / 9%);
+    }
+
+    .quick-reminders .day-heading {
+      color: #48227f;
+      border-bottom-color: #f0d978;
+    }
+
+    .quick-reminders .day-heading span { color: #8c4b8d; font-weight: 700; }
+    .quick-reminders .stop { grid-template-columns: max-content minmax(0, 1fr); align-items: start; }
+    .quick-reminders .time { color: #b42363; }
+    .quick-reminders .place { color: #302344; font-size: 16px; }
+
+    .stops { margin: 0; padding: 4px 21px 6px; list-style: none; }
+
+    .stop {
+      position: relative;
+      display: grid;
+      grid-template-columns: 66px minmax(0, 1fr);
+      gap: 13px;
+      padding: 16px 0 17px;
+    }
+
+    .stop + .stop { border-top: 1px solid #f0ebe2; }
+
+    .time {
+      padding-top: 1px;
+      color: var(--orange);
+      font-size: 15px;
+      font-weight: 750;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .place { margin: 0; font-size: 18px; font-weight: 750; line-height: 1.4; }
+    .description { margin: 5px 0 0; color: var(--muted); font-size: 15px; }
+
+    .footer-note {
+      margin: 20px 4px 0;
+      color: var(--muted);
+      font-size: 14px;
+      text-align: center;
+    }
+
+    @media (min-width: 600px) {
+      .page { padding-top: 56px; }
+      .hero { padding: 33px 34px 30px; }
+      .day-heading { padding-left: 25px; }
+      .stops { padding-right: 25px; padding-left: 25px; }
+      .stop { grid-template-columns: 76px minmax(0, 1fr); gap: 17px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <p class="eyebrow">嗨，朋友！準備開衝</p>
+      <h1>嗨翻</h1>
+      <p class="hero-note">日本宮古島五天四夜｜海島玩好玩滿、一起嗨翻！</p>
+    </header>
+
+    <section class="day quick-reminders" aria-labelledby="trip-reminders">
+      <h2 class="day-heading" id="trip-reminders">行前提醒 <span>開團必看！⚡</span></h2>
+      <ul class="stops">
+        <li class="stop">
+          <span class="time">天氣</span>
+          <div><p class="place">示意：晴時多雲、海邊日照強；出發前再看天氣預報。</p></div>
+        </li>
+        <li class="stop">
+          <span class="time">要帶的東西</span>
+          <div><p class="place">示意：防曬乳、帽子、泳衣、海灘鞋和行動電源。</p></div>
+        </li>
+        <li class="stop">
+          <span class="time">集合時間</span>
+          <div><p class="place">示意：第一天 10:00，在宮古機場到達大廳集合。</p></div>
+        </li>
+      </ul>
+    </section>
+
+    <div class="days">
+      <section class="day" aria-labelledby="day-one">
+        <h2 class="day-heading" id="day-one">第一天 <span>抵達宮古・南島海灘</span></h2>
+        <ol class="stops">
+          <li class="stop">
+            <time class="time" datetime="10:00">10:00</time>
+            <div><h3 class="place">宮古機場</h3><p class="description">示意抵達時間，取車後先到市區放行李、補給飲水。</p></div>
+          </li>
+          <li class="stop">
+            <time class="time" datetime="12:00">12:00</time>
+            <div><h3 class="place">示意午餐店 A・平良市區</h3><p class="description">先用示意店名安排第一餐，嚐嚐島上的沖繩料理。</p></div>
+          </li>
+          <li class="stop">
+            <time class="time" datetime="14:00">14:00</time>
+            <div><h3 class="place">與那霸前濱海灘</h3><p class="description">踩踩細白沙、看看透亮的海色，開啟宮古藍模式。</p></div>
+          </li>
+          <li class="stop">
+            <time class="time" datetime="17:00">17:00</time>
+            <div><h3 class="place">來間島・龍宮城展望台</h3><p class="description">登上展望台，把前濱海灘和來間大橋的景色一次收進眼裡。</p></div>
+          </li>
+        </ol>
+      </section>
+
+      <section class="day" aria-labelledby="day-two">
+        <h2 class="day-heading" id="day-two">第二天 <span>砂山海色・池間島兜風</span></h2>
+        <ol class="stops">
+          <li class="stop">
+            <time class="time" datetime="09:00">09:00</time>
+            <div><h3 class="place">砂山海灘</h3><p class="description">沿著沙丘步道走到海邊，欣賞珊瑚岩洞和藍色海灣。</p></div>
+          </li>
+          <li class="stop">
+            <time class="time" datetime="11:30">11:30</time>
+            <div><h3 class="place">池間大橋</h3><p class="description">開上跨海大橋看海水漸層，找安全停車點再拍照。</p></div>
+          </li>
+          <li class="stop">
+            <time class="time" datetime="12:30">12:30</time>
+            <div><h3 class="place">示意午餐店 B・池間島</h3><p class="description">用示意店名留一段午餐時間，試試島上漁獲或宮古麵。</p></div>
+          </li>
+          <li class="stop">
+            <time class="time" datetime="15:00">15:00</time>
+            <div><h3 class="place">西平安名崎</h3><p class="description">到島嶼北端吹吹海風，遠望池間島與伊良部島。</p></div>
+          </li>
+        </ol>
+      </section>
+
+      <section class="day" aria-labelledby="day-three">
+        <h2 class="day-heading" id="day-three">第三天 <span>伊良部大橋・下地島探險</span></h2>
+        <ol class="stops">
+          <li class="stop">
+            <time class="time" datetime="09:00">09:00</time>
+            <div><h3 class="place">伊良部大橋</h3><p class="description">沿著跨海大橋開往伊良部島，沿途欣賞宮古藍全景。</p></div>
+          </li>
+          <li class="stop">
+            <time class="time" datetime="10:30">10:30</time>
+            <div><h3 class="place">通池</h3><p class="description">沿步道探訪兩座相連的海蝕池，看看獨特的地形景觀。</p></div>
+          </li>
+          <li class="stop">
+            <time class="time" datetime="12:30">12:30</time>
+            <div><h3 class="place">示意午餐店 C・伊良部島</h3><p class="description">在伊良部島安排一頓示意午餐，吃飽再繼續兜風。</p></div>
+          </li>
+          <li class="stop">
+            <time class="time" datetime="15:00">15:00</time>
+            <div><h3 class="place">17END・下地島</h3><p class="description">在海邊步道欣賞清澈海色，留意現場公告與飛機起降狀況。</p></div>
+          </li>
+        </ol>
+      </section>
+
+      <section class="day" aria-labelledby="day-four">
+        <h2 class="day-heading" id="day-four">第四天 <span>東海岸秘境・南島海灣</span></h2>
+        <ol class="stops">
+          <li class="stop">
+            <time class="time" datetime="09:00">09:00</time>
+            <div><h3 class="place">東平安名崎</h3><p class="description">沿著狹長岬角散步，欣賞兩側海景和白色燈塔。</p></div>
+          </li>
+          <li class="stop">
+            <time class="time" datetime="11:30">11:30</time>
+            <div><h3 class="place">吉野海岸</h3><p class="description">在珊瑚礁海岸看看海底生態，水上活動依潮汐與現場狀況安排。</p></div>
+          </li>
+          <li class="stop">
+            <time class="time" datetime="13:30">13:30</time>
+            <div><h3 class="place">示意午餐店 D・城邊地區</h3><p class="description">以示意店名預留午餐時段，吃完稍作休息再出發。</p></div>
+          </li>
+          <li class="stop">
+            <time class="time" datetime="15:30">15:30</time>
+            <div><h3 class="place">印加瑪海濱公園</h3><p class="description">逛逛被海灣環抱的步道和展望點，享受悠閒的午後。</p></div>
+          </li>
+        </ol>
+      </section>
+
+      <section class="day" aria-labelledby="day-five">
+        <h2 class="day-heading" id="day-five">第五天 <span>平良市區・收心返程</span></h2>
+        <ol class="stops">
+          <li class="stop">
+            <time class="time" datetime="09:00">09:00</time>
+            <div><h3 class="place">示意早餐店 E・平良市區</h3><p class="description">用最後一頓示意早餐慢慢開機，再整理行李退房。</p></div>
+          </li>
+          <li class="stop">
+            <time class="time" datetime="10:30">10:30</time>
+            <div><h3 class="place">宮古神社與平良市街</h3><p class="description">在市區散步買伴手禮，為旅程補上最後一站小巡禮。</p></div>
+          </li>
+          <li class="stop">
+            <time class="time" datetime="12:00">12:00</time>
+            <div><h3 class="place">示意午餐店 F・平良市區</h3><p class="description">用示意店名安排返程前的午餐，店家之後再換成真的。</p></div>
+          </li>
+          <li class="stop">
+            <time class="time" datetime="14:00">14:00</time>
+            <div><h3 class="place">宮古機場・返程</h3><p class="description">預留還車和報到時間，實際抵達時間依航班調整。</p></div>
+          </li>
+        </ol>
+      </section>
+    </div>
+
+    <p class="footer-note">店名與時間皆為示意，請依航班、交通、天候和海況調整</p>
+  </main>
+</body>
+</html>
