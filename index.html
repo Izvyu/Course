@@ -661,7 +661,7 @@
           if (!daysResponse.ok) throw new Error("天數讀取失敗");
           const days = await daysResponse.json();
           if (!Array.isArray(days)) throw new Error("天數資料格式不正確");
-          itineraryDays = days;
+          itineraryDays = days.map((day) => ({ ...day, number: Number(day.day_number) }));
           const response = await fetch(
             `${ITINERARY_URL}?select=id,day_number,start_time,place,description,created_at&order=day_number.asc,start_time.asc,created_at.asc`,
             { headers: { apikey: SUPABASE_PUBLISHABLE_KEY } }
